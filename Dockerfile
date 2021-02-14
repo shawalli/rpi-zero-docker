@@ -1,3 +1,6 @@
+#######################################
+# BUILDER: qemu
+#######################################
 FROM debian:stable-slim AS qemu-builder
 ARG QEMU_VERSION=v4.2.0
 ARG QEMU_PACKAGES="""\
@@ -27,9 +30,9 @@ RUN cd qemu && \
     git submodule init && \
     git submodule update --recursive
 
-# Build qemu
+#### Build qemu
 RUN ./qemu/configure --static --target-list=arm-softmmu,aarch64-softmmu
 RUN make -j$(nproc)
 
-#RUN # Strip the binary, this gives a substantial size reduction!
-#RUN strip "arm-softmmu/qemu-system-arm" "aarch64-softmmu/qemu-system-aarch64"
+#### Strip the binary, this gives a substantial size reduction!
+RUN strip "arm-softmmu/qemu-system-arm" "aarch64-softmmu/qemu-system-aarch64"
